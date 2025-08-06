@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AgendaApp.API.Contexts;
+using AgendaApp.API.Entities;
+using AgendaApp.API.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaApp.API.Controllers
@@ -10,7 +13,11 @@ namespace AgendaApp.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok();
+            var categoriaRepository = new CategoriaRepository();
+
+            var categorias = categoriaRepository.ObterTodos();
+
+            return Ok(categorias);
         }
     }
 }
