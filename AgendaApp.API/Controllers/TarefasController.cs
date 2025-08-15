@@ -11,6 +11,13 @@ namespace AgendaApp.API.Controllers
     [ApiController]
     public class TarefasController : ControllerBase
     {
+        #region
+
+        private readonly string _categoriaNaoEncontrado = "Categoria não encontrada. Verifique o ID Informado.";
+        private readonly string _tarefaNaoEncontrado = "Tarefa não encontrada. Verifique o ID Informado.";
+        private readonly string _nenhumRegistroEncontrado = "Nenhum registro encontrado.";
+        #endregion
+
         [HttpPost]
         public IActionResult Post([FromBody] TarefaRequestDto request)
         {
@@ -33,22 +40,65 @@ namespace AgendaApp.API.Controllers
             return StatusCode(201, new { tarefa.Id, request });
         }
 
-        [HttpPut]
-        public IActionResult Put()
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, [FromBody] TarefaRequestDto request)
         {
-            return Ok();
+            var tarefaRepository = new TarefaRepository();
+
+            var tarefa = tarefaRepository.ObterPorId(id);
+            if (tarefa == null)
+                return NotFound(new { mensagem = _tarefaNaoEncontrado });
+
+            var categoriaRepository = new CategoriaRepository();
+            if(!categoriaRepository.CategoriaExistente(request.CategoriaId.Value))
+                return NotFound(new { mensagem = _categoriaNaoEncontrado });
+
+            tarefa.Nome = request.Nome ?? string.Empty;
+            tarefa.DataHora = DateTime.Parse($"{request.Data} {request.Hora}");
+            tarefa.Prioridade = (Prioridade)request.Prioridade.Value;
+            tarefa.CategoriaId = request.CategoriaId.Value;
+
+            tarefaRepository.Atualizar(tarefa);
+
+            return StatusCode(200, new { tarefa.Id, request });
         }
 
-        [HttpDelete]
-        public IActionResult Delete()
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
         {
-            return Ok();
+            var tarefaRepository = new TarefaRepository();
+
+            var tarefa = tarefaRepository.ObterPorId(id);
+            if (tarefa == null)
+                return NotFound(new { mensagem = _tarefaNaoEncontrado });
+
+            tarefaRepository.Excluir(tarefa);
+
+            return StatusCode(200, new { tarefa.Id});
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpGet("{dataHoraInicio}/{dataHoraFim}")]
+        public IActionResult GetAll(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            return Ok();
+            var tarefaRepository = new TarefaRepository();
+            var tarefas = tarefaRepository.ObterPorDatas(dataHoraInicio, dataHoraFim);
+
+            if (!tarefas.Any())
+                return StatusCode(204, new { mensagem = _nenhumRegistroEncontrado });
+
+            return StatusCode(200, tarefas);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetById(Guid id)
+        {
+            var tarefaRepository = new TarefaRepository();
+            var tarefa = tarefaRepository.ObterPorId(id);
+
+            if (tarefa == null)
+                return StatusCode(204, new { mensagem = _nenhumRegistroEncontrado });
+
+            return StatusCode(200, tarefa);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace AgendaApp.API.Entities
 
         #region Relacionamentos
 
-        public Categoria Categoria { get; set; } = new();
+        public Categoria? Categoria { get; set; }
 
         #endregion
     }
