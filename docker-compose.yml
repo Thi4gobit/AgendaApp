@@ -1,0 +1,39 @@
+services:
+
+  agendaapp:
+    build:
+      context: .
+      dockerfile: AgendaApp.API/Dockerfile
+    container_name: agendaapp_api
+    ports:
+      - "8082:8080"
+    depends_on:
+      - sqlserver
+    restart: always
+    networks:
+      - agendaapp_network
+    environment:
+      - ConnectionStrings__DataContext=Data Source=sqlserver,1433;Initial Catalog=master;User ID=sa;Password=Coti@2025;Encrypt=False;
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: agendaapp_sqlserver
+    ports:
+      - "1435:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Coti@2025
+    volumes:
+      - sqlserver_dataagenda:/var/opt/mssql
+    networks:
+      - agendaapp_network
+
+volumes:
+  sqlserver_dataagenda:
+
+networks:
+  agendaapp_network:
+    driver: bridge
+
+
+

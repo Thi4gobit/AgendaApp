@@ -9,7 +9,7 @@ namespace AgendaApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TarefasController : ControllerBase
+    public class TarefasController (CategoriaRepository categoriaRepository, TarefaRepository tarefaRepository) : ControllerBase
     {
         #region
 
@@ -22,7 +22,7 @@ namespace AgendaApp.API.Controllers
         public IActionResult Post([FromBody] TarefaRequestDto request)
         {
             //var categoriaRepository = new CategoriasController();
-            var categoriaRepository = new CategoriaRepository();
+            //var categoriaRepository = new CategoriaRepository();
             if (!categoriaRepository.CategoriaExistente(request.CategoriaId.Value))
                 return NotFound(new { mensagem = "Categoria não encontrada. Verifique o ID Informado." });
 
@@ -34,7 +34,7 @@ namespace AgendaApp.API.Controllers
                 CategoriaId = request.CategoriaId.Value
             };
 
-            var tarefaRepository = new TarefaRepository();
+            //var tarefaRepository = new TarefaRepository();
 
             tarefaRepository.Inserir(tarefa);
             return StatusCode(201, new { tarefa.Id, request });
@@ -43,13 +43,13 @@ namespace AgendaApp.API.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] TarefaRequestDto request)
         {
-            var tarefaRepository = new TarefaRepository();
+            //var tarefaRepository = new TarefaRepository();
 
             var tarefa = tarefaRepository.ObterPorId(id);
             if (tarefa == null)
                 return NotFound(new { mensagem = _tarefaNaoEncontrado });
 
-            var categoriaRepository = new CategoriaRepository();
+            //var categoriaRepository = new CategoriaRepository();
             if(!categoriaRepository.CategoriaExistente(request.CategoriaId.Value))
                 return NotFound(new { mensagem = _categoriaNaoEncontrado });
 
@@ -66,7 +66,7 @@ namespace AgendaApp.API.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var tarefaRepository = new TarefaRepository();
+            //var tarefaRepository = new TarefaRepository();
 
             var tarefa = tarefaRepository.ObterPorId(id);
             if (tarefa == null)
@@ -80,7 +80,7 @@ namespace AgendaApp.API.Controllers
         [HttpGet("{dataHoraInicio}/{dataHoraFim}")]
         public IActionResult GetAll(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            var tarefaRepository = new TarefaRepository();
+            //var tarefaRepository = new TarefaRepository();
             var tarefas = tarefaRepository.ObterPorDatas(dataHoraInicio, dataHoraFim);
 
             if (!tarefas.Any())
@@ -92,7 +92,7 @@ namespace AgendaApp.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(Guid id)
         {
-            var tarefaRepository = new TarefaRepository();
+            //var tarefaRepository = new TarefaRepository();
             var tarefa = tarefaRepository.ObterPorId(id);
 
             if (tarefa == null)

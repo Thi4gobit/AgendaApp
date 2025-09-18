@@ -8,13 +8,11 @@ namespace AgendaApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriasController : ControllerBase
+    public class CategoriasController (CategoriaRepository categoriaRepository) : ControllerBase
     {
         [HttpGet]
         public IActionResult GetAll()
         {
-            var categoriaRepository = new CategoriaRepository();
-
             var categorias = categoriaRepository.ObterTodos();
 
             return Ok(categorias);

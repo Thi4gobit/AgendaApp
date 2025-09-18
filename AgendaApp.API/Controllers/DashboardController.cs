@@ -5,12 +5,11 @@ namespace AgendaApp.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DashboardController : ControllerBase
+    public class DashboardController(TarefaRepository tarefaRepository) : ControllerBase
     {
         [HttpGet("tarefas-prioridade/{dataHoraInicio}/{dataHoraFim}")]
         public IActionResult GetTarefasPorPrioridade(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            var tarefaRepository = new TarefaRepository();
             var response = tarefaRepository.ObterTarefasPorPrioridade(dataHoraInicio, dataHoraFim);
 
             if(!response.Any())
@@ -22,7 +21,6 @@ namespace AgendaApp.API.Controllers
         [HttpGet("tarefas-categoria/{dataHoraInicio}/{dataHoraFim}")]
         public IActionResult GetTarefasCategoria(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            var tarefaRepository = new TarefaRepository();
             var response = tarefaRepository.ObterTarefasPorCategoria(dataHoraInicio, dataHoraFim);
 
             if (!response.Any())

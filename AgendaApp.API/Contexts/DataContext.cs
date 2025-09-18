@@ -8,9 +8,9 @@ namespace AgendaApp.API.Contexts
     /// </summary>
     public class DataContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=DBAgenda;Integrated Security=True");
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

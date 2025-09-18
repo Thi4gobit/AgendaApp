@@ -8,18 +8,15 @@ namespace AgendaApp.API.Repositories
     /// <summary>
     /// Repository for managing tasks in the agenda application.
     /// </summary>
-    public class TarefaRepository
+    public class TarefaRepository (DataContext context)
     {
         /// <summary>
         /// Inserts a new task into the repository.
         /// </summary>
         public void Inserir(Tarefa tarefa)
         {
-            using (var context = new DataContext())
-            {
-                context.Add(tarefa);
-                context.SaveChanges();
-            }
+            context.Add(tarefa);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -27,11 +24,8 @@ namespace AgendaApp.API.Repositories
         /// </summary>
         public void Atualizar(Tarefa tarefa)
         {
-            using (var context = new DataContext())
-            {
-                context.Update(tarefa);
-                context.SaveChanges();
-            }
+            context.Update(tarefa);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -39,11 +33,8 @@ namespace AgendaApp.API.Repositories
         /// </summary>
         public void Excluir(Tarefa tarefa)
         {
-            using (var context = new DataContext())
-            {
-                context.Remove(tarefa);
-                context.SaveChanges();
-            }
+            context.Remove(tarefa);
+            context.SaveChanges();
         }
 
         /// <summary>
@@ -51,15 +42,12 @@ namespace AgendaApp.API.Repositories
         /// </summary>
         public List<Tarefa> ObterPorDatas(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            using (var context = new DataContext())
-            {
-                return context
-                    .Set<Tarefa>()
-                    .Include(t => t.Categoria)
-                    .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
-                    .OrderByDescending(t => t.DataHora)
-                    .ToList();
-            }
+            return context
+                .Set<Tarefa>()
+                .Include(t => t.Categoria)
+                .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
+                .OrderByDescending(t => t.DataHora)
+                .ToList();
         }
 
         /// <summary>
@@ -67,13 +55,10 @@ namespace AgendaApp.API.Repositories
         /// </summary>
         public Tarefa? ObterPorId(Guid id)
         {
-            using (var context = new DataContext())
-            {
-                return context
-                    .Set<Tarefa>()
-                    .Include(t => t.Categoria)
-                    .FirstOrDefault(t => t.Id == id);
-            }
+            return context
+                .Set<Tarefa>()
+                .Include(t => t.Categoria)
+                .FirstOrDefault(t => t.Id == id);
         }
 
         /// <summary>
@@ -81,40 +66,34 @@ namespace AgendaApp.API.Repositories
         /// </summary>
         public List<TarefaPrioridadeResponseDto> ObterTarefasPorPrioridade(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            using (var context = new DataContext())
-            {
-                return context
-                    .Set<Tarefa>()
-                    .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
-                    .GroupBy(t => t.Prioridade)
-                    .Select(g => new TarefaPrioridadeResponseDto
-                    {
-                        NomePrioridade = g.Key.ToString(),
-                        QtdTarefas = g.Count()
-                    })
-                    .OrderByDescending(dto => dto.QtdTarefas)
-                    .ToList();
-            }
+            return context
+                .Set<Tarefa>()
+                .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
+                .GroupBy(t => t.Prioridade)
+                .Select(g => new TarefaPrioridadeResponseDto
+                {
+                    NomePrioridade = g.Key.ToString(),
+                    QtdTarefas = g.Count()
+                })
+                .OrderByDescending(dto => dto.QtdTarefas)
+                .ToList();
         }
 
 
         public List<TarefaCategoriaResponseDto> ObterTarefasPorCategoria(DateTime dataHoraInicio, DateTime dataHoraFim)
         {
-            using (var context = new DataContext())
-            {
-                return context
-                    .Set<Tarefa>()
-                    .Include(t => t.Categoria)
-                    .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
-                    .GroupBy(t => t.Categoria!.Nome)
-                    .Select(g => new TarefaCategoriaResponseDto
-                    {
-                        NomeCategoria = g.Key,
-                        QtdTarefas = g.Count()
-                    })
-                    .OrderByDescending(dto => dto.QtdTarefas)
-                    .ToList();
-            }
+            return context
+                .Set<Tarefa>()
+                .Include(t => t.Categoria)
+                .Where(t => t.DataHora >= dataHoraInicio && t.DataHora <= dataHoraFim)
+                .GroupBy(t => t.Categoria!.Nome)
+                .Select(g => new TarefaCategoriaResponseDto
+                {
+                    NomeCategoria = g.Key,
+                    QtdTarefas = g.Count()
+                })
+                .OrderByDescending(dto => dto.QtdTarefas)
+                .ToList();
         }
     }
 }
