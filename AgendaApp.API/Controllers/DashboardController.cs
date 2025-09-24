@@ -1,8 +1,10 @@
 ﻿using AgendaApp.API.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgendaApp.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DashboardController(TarefaRepository tarefaRepository) : ControllerBase

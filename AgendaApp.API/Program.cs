@@ -1,6 +1,9 @@
+using System.Text;
 using AgendaApp.API.Contexts;
 using AgendaApp.API.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,26 @@ builder.Services.AddScoped<TarefaRepository>();
 builder.Services.AddScoped<CategoriaRepository>();
 
 
+//Configurar a politica de autenticação do projeto
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    //configurações para validar o token
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true, //validando a expiração do token
+        ValidateIssuerSigningKey = true, //valida a chave de assinatura do token
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
+            (builder.Configuration.GetValue<string>("JwtBearerSettings:SecretKey")))
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,8 +68,10 @@ app.UseSwaggerUI();
 
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
